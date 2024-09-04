@@ -28,4 +28,8 @@ interface PrioridadDao {
 
     @Query("Select * From Prioridades")
     fun getAll(): Flow<List<PrioridadEntity>>
+
+    @Query("SELECT * FROM Prioridades WHERE descripcion LIKE :descripcion")
+    suspend fun findByDescripcion(descripcion: String): PrioridadEntity?
+
 }
