@@ -51,6 +51,12 @@ import edu.ucne.prioridades.entities.PrioridadEntity
 import edu.ucne.prioridades.ui.theme.PrioridadesTheme
 import kotlinx.coroutines.launch
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
+import java.util.Collections.list
 
 
 class MainActivity : ComponentActivity() {
@@ -81,6 +87,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
     @Composable
     fun PrioridadScreen(
     ) {
@@ -88,15 +95,16 @@ class MainActivity : ComponentActivity() {
         var diasComrpomiso by remember { mutableStateOf("") }
         var errorMessageDes: String? by remember { mutableStateOf(null) }
         var errorMessageDias: String? by remember { mutableStateOf("") }
+        var errorMessageExist: String? by remember { mutableStateOf("") }
 
-        Scaffold {innerPadding ->
+        Scaffold { innerPadding ->
 
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
                     .padding(8.dp)
-            ){
+            ) {
                 ElevatedCard(
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -105,8 +113,11 @@ class MainActivity : ComponentActivity() {
                             .fillMaxWidth()
                             .padding(15.dp),
                         horizontalArrangement = Arrangement.Center
-                    ){
-                        Text(text = "Registro de Prioridades", style= MaterialTheme.typography.headlineMedium)
+                    ) {
+                        Text(
+                            text = "Registro de Prioridades",
+                            style = MaterialTheme.typography.headlineMedium
+                        )
                     }
                     Column(
                         modifier = Modifier
@@ -114,25 +125,37 @@ class MainActivity : ComponentActivity() {
                             .padding(8.dp)
                     ) {
                         OutlinedTextField(
-                            label = {Text(text = "Descripción")},
+                            label = { Text(text = "Descripción") },
                             value = descripcion,
-                            onValueChange =  {descripcion = it},
+                            onValueChange = { descripcion = it },
                             modifier = Modifier.fillMaxWidth(),
                         )
-                        Text(text = errorMessageDes.orEmpty(), color = MaterialTheme.colorScheme.error)
+                        Text(
+                            text = errorMessageDes.orEmpty(),
+                            color = MaterialTheme.colorScheme.error
+                        )
                         OutlinedTextField(
-                            label = {Text(text="Días Compromiso")},
+                            label = { Text(text = "Días Compromiso") },
                             value = diasComrpomiso,
-                            onValueChange = {diasComrpomiso = it},
+                            onValueChange = { diasComrpomiso = it },
                             modifier = Modifier.fillMaxWidth(),
                             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                         )
-                        Text(text = errorMessageDias.orEmpty(), color = MaterialTheme.colorScheme.error)
-                        Spacer(modifier = Modifier.padding(2.dp))
+                        Text(
+                            text = errorMessageDias.orEmpty(),
+                            color = MaterialTheme.colorScheme.error
+                        )
+
+                        Text(
+                            text = errorMessageExist.orEmpty(),
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.padding(5.dp).align(Alignment.CenterHorizontally),
+                            style = MaterialTheme.typography.titleMedium
+                        )
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Center
-                        ){
+                        ) {
                             OutlinedButton(
                                 onClick = {
                                     descripcion = ""
@@ -151,16 +174,21 @@ class MainActivity : ComponentActivity() {
                             OutlinedButton(
                                 onClick = {
                                     val newDiasCompromiso = diasComrpomiso.toIntOrNull()
-                                    if(descripcion.isBlank()){
+                                    val descripcionExiste = runBlocking {findByDescription(descripcion)}
+                                    if (descripcion.isBlank()) {
                                         errorMessageDes = "Este campo es requerido"
                                     }
-                                    if(newDiasCompromiso == null){
+                                    if (newDiasCompromiso == null) {
                                         errorMessageDias = "Este campo es requerido"
+                                        return@OutlinedButton
                                     }
-                                    if(newDiasCompromiso!! > 31 || newDiasCompromiso < 1){
+                                    if (newDiasCompromiso > 31 || newDiasCompromiso < 1) {
                                         errorMessageDias = "Este campo debe estar entre 1 y 31"
                                     }
-                                    else{
+                                    if(descripcionExiste != null){
+                                        errorMessageExist = "Esta descripción ya existe"
+                                    }
+                                    else {
                                         scope.launch {
                                             savePrioridad(
                                                 PrioridadEntity(
@@ -168,7 +196,7 @@ class MainActivity : ComponentActivity() {
                                                     diasCompromiso = newDiasCompromiso
                                                 )
                                             )
-                                            descripcion= ""
+                                            descripcion = ""
                                             diasComrpomiso = ""
                                             errorMessageDes = null
                                             errorMessageDias = null
@@ -200,30 +228,27 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun PrioridadListScreen(prioridadList: List<PrioridadEntity>){
+    fun PrioridadListScreen(prioridadList: List<PrioridadEntity>) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            Spacer(modifier = Modifier.height(32.dp))
+
+            Text(
+                text = "Lista de Prioridades",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.align(Alignment.CenterHorizontally).padding(24.dp)
+            )
             Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp)
             ){
-                Text(
-                    text= "Lista de Prioridades",
-                    style = MaterialTheme.typography.titleLarge,
-
-
-                )
+                Text("Id", modifier = Modifier.weight(1f))
+                Text("Descripción", modifier = Modifier.weight(2.5f))
+                Text("Días Compromiso", modifier = Modifier.weight(2.5f))
             }
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
             ) {
-                items(prioridadList){
+                items(prioridadList) {
                     PrioridadRow(it)
                 }
 
@@ -232,24 +257,18 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun PrioridadRow(it: PrioridadEntity){
-        Row(
-            modifier = Modifier.padding(5.dp)
-        ){
-            Text("Id", modifier = Modifier.weight(1f))
-            Text("Descripción", modifier = Modifier.weight(2f))
-            Text("Días Compromiso", modifier = Modifier.weight(2f))
-        }
+    private fun PrioridadRow(it: PrioridadEntity) {
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(5.dp)
-        ){
+        ) {
             Text(
                 modifier = Modifier.weight(1f),
                 text = it.prioridadId.toString()
             )
             Text(
-                modifier = Modifier.weight(2f),
+                modifier = Modifier.weight(2.5f),
                 text = it.descripcion,
             )
             Text(
@@ -260,10 +279,14 @@ class MainActivity : ComponentActivity() {
         HorizontalDivider()
     }
 
-    private suspend fun savePrioridad(prioridad: PrioridadEntity){
+    private suspend fun savePrioridad(prioridad: PrioridadEntity) {
         prioridadDb.prioridadDao().save(prioridad)
     }
 
+    private suspend fun findByDescription(descripcion: String): PrioridadEntity? {
+        val existe =prioridadDb.prioridadDao().findByDescripcion(descripcion)
+        return existe
+    }
 
     @Preview(showBackground = true, showSystemUi = true)
     @Composable
