@@ -162,6 +162,7 @@ class MainActivity : ComponentActivity() {
                                     diasComrpomiso = ""
                                     errorMessageDes = null
                                     errorMessageDias = null
+                                    errorMessageExist = null
                                 }
                             ) {
                                 Icon(
@@ -200,6 +201,7 @@ class MainActivity : ComponentActivity() {
                                             diasComrpomiso = ""
                                             errorMessageDes = null
                                             errorMessageDias = null
+                                            errorMessageExist = null
                                         }
                                     }
                                 }
