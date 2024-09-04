@@ -1,20 +1,14 @@
 package edu.ucne.prioridades
 
-import android.graphics.Paint.Style
-import android.graphics.drawable.Icon
 import android.os.Bundle
-import android.widget.Space
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -30,7 +24,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,7 +32,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -51,12 +43,8 @@ import edu.ucne.prioridades.entities.PrioridadEntity
 import edu.ucne.prioridades.ui.theme.PrioridadesTheme
 import kotlinx.coroutines.launch
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
-import java.util.Collections.list
+
 
 
 class MainActivity : ComponentActivity() {
@@ -93,9 +81,7 @@ class MainActivity : ComponentActivity() {
     ) {
         var descripcion by remember { mutableStateOf("") }
         var diasComrpomiso by remember { mutableStateOf("") }
-        var errorMessageDes: String? by remember { mutableStateOf(null) }
-        var errorMessageDias: String? by remember { mutableStateOf("") }
-        var errorMessageExist: String? by remember { mutableStateOf("") }
+        var errorMessage: String? by remember { mutableStateOf("") }
 
         Scaffold { innerPadding ->
 
@@ -130,10 +116,7 @@ class MainActivity : ComponentActivity() {
                             onValueChange = { descripcion = it },
                             modifier = Modifier.fillMaxWidth(),
                         )
-                        Text(
-                            text = errorMessageDes.orEmpty(),
-                            color = MaterialTheme.colorScheme.error
-                        )
+
                         OutlinedTextField(
                             label = { Text(text = "Días Compromiso") },
                             value = diasComrpomiso,
@@ -141,13 +124,10 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.fillMaxWidth(),
                             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                         )
-                        Text(
-                            text = errorMessageDias.orEmpty(),
-                            color = MaterialTheme.colorScheme.error
-                        )
+
 
                         Text(
-                            text = errorMessageExist.orEmpty(),
+                            text = errorMessage.orEmpty(),
                             color = MaterialTheme.colorScheme.error,
                             modifier = Modifier.padding(5.dp).align(Alignment.CenterHorizontally),
                             style = MaterialTheme.typography.titleMedium
@@ -160,9 +140,7 @@ class MainActivity : ComponentActivity() {
                                 onClick = {
                                     descripcion = ""
                                     diasComrpomiso = ""
-                                    errorMessageDes = null
-                                    errorMessageDias = null
-                                    errorMessageExist = null
+                                    errorMessage = null
                                 }
                             ) {
                                 Icon(
@@ -176,20 +154,14 @@ class MainActivity : ComponentActivity() {
                                 onClick = {
                                     val newDiasCompromiso = diasComrpomiso.toIntOrNull()
                                     val descripcionExiste = runBlocking {findByDescription(descripcion)}
-                                    if (descripcion.isBlank()) {
-                                        errorMessageDes = "Este campo es requerido"
+                                    errorMessage = when {
+                                        descripcion.isBlank() -> "Todos los campos son requeridos"
+                                        newDiasCompromiso == null  -> "Todos los campos son requeridos"
+                                        newDiasCompromiso > 31 || newDiasCompromiso < 1 -> "Este campo debe estar entre 1 y 31"
+                                        descripcionExiste != null -> "Esta descripción ya existe"
+                                        else -> ""
                                     }
-                                    if (newDiasCompromiso == null) {
-                                        errorMessageDias = "Este campo es requerido"
-                                        return@OutlinedButton
-                                    }
-                                    if (newDiasCompromiso > 31 || newDiasCompromiso < 1) {
-                                        errorMessageDias = "Este campo debe estar entre 1 y 31"
-                                    }
-                                    if(descripcionExiste != null){
-                                        errorMessageExist = "Esta descripción ya existe"
-                                    }
-                                    else {
+                                    if(errorMessage?.isEmpty() == true){
                                         scope.launch {
                                             savePrioridad(
                                                 PrioridadEntity(
@@ -199,9 +171,7 @@ class MainActivity : ComponentActivity() {
                                             )
                                             descripcion = ""
                                             diasComrpomiso = ""
-                                            errorMessageDes = null
-                                            errorMessageDias = null
-                                            errorMessageExist = null
+                                            errorMessage = null
                                         }
                                     }
                                 }
