@@ -1,4 +1,4 @@
-package edu.ucne.prioridades.entities
+package edu.ucne.prioridades.Data.dao.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
