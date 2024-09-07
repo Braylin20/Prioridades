@@ -147,10 +147,8 @@ fun PrioridadScreen(
                                         descripcionExiste != null && descripcionExiste.prioridadId != prioridadId -> "Esta descripción ya existe"
                                         else -> ""
                                     }
-
                                     if (message.isNullOrEmpty()) {
                                         if (prioridadId > 0) {
-
                                             prioridadDb.prioridadDao().update(
                                                 PrioridadEntity(
                                                     prioridadId = prioridadId,
@@ -167,11 +165,9 @@ fun PrioridadScreen(
                                                 )
                                             )
                                             message = "Guardado correctamente"
-
                                         }
                                         descripcion = ""
                                         diasComrpomiso = ""
-
                                     }
                                 }
                             }
