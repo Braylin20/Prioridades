@@ -11,12 +11,12 @@ import androidx.room.Room
 import edu.ucne.prioridades.Data.dao.database.PrioridadDb
 import edu.ucne.prioridades.Data.dao.entities.PrioridadEntity
 import edu.ucne.prioridades.presentation.navigation.PrioridadNavHost
+import edu.ucne.prioridades.presentation.navigation.prioridad.PrioridadListScreen
 import edu.ucne.prioridades.ui.theme.PrioridadesTheme
 
 
 class MainActivity : ComponentActivity() {
     private lateinit var prioridadDb: PrioridadDb
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -35,8 +35,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-
-
     @Preview(showBackground = true, showSystemUi = true)
     @Composable
     fun PrioridadScreenPreview() {
@@ -46,7 +44,10 @@ class MainActivity : ComponentActivity() {
             PrioridadEntity(3, "Baja", 1)
         )
         PrioridadesTheme {
-
+            PrioridadListScreen(
+                prioridadList,
+                createPrioridad = {},
+                ) { }
         }
     }
 }
