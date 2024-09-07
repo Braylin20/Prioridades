@@ -3,6 +3,7 @@ package edu.ucne.prioridades.Data.dao.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
+import androidx.room.Update
 import androidx.room.Upsert
 import edu.ucne.prioridades.Data.dao.entities.PrioridadEntity
 import kotlinx.coroutines.flow.Flow
@@ -13,6 +14,8 @@ interface PrioridadDao {
     @Upsert()
     suspend fun save(prioridad: PrioridadEntity)
 
+    @Update()
+    suspend fun update(prioridad: PrioridadEntity)
     @Query(
         """
             Select *
@@ -31,5 +34,6 @@ interface PrioridadDao {
 
     @Query("SELECT * FROM Prioridades WHERE descripcion LIKE :descripcion")
     suspend fun findByDescripcion(descripcion: String): PrioridadEntity?
+
 
 }
