@@ -3,6 +3,7 @@ package edu.ucne.prioridades.presentation.navigation.prioridad
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import edu.ucne.prioridades.Data.dao.entities.PrioridadEntity
 import edu.ucne.prioridades.Data.repository.PrioridadRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,7 +24,7 @@ class PrioridadViewModel @Inject constructor(
 
     fun save(){
         viewModelScope.launch {
-            if(_uiState.value.descripcion.isBlank()&& _uiState.value.diasCompromiso.toString().isBlank()){
+            if(_uiState.value.descripcion.isBlank() || _uiState.value.diasCompromiso == null || _uiState.value.diasCompromiso!! < 1){
                 _uiState.update {
                     it.copy(errorMessage = "Debe ingresar todos los campos")
                 }
@@ -42,13 +43,11 @@ class PrioridadViewModel @Inject constructor(
             }
         }
     }
-
-    fun delete(){
+    fun delete(prioridad: PrioridadEntity){
         viewModelScope.launch {
-            prioridadRepository.delete(_uiState.value.toEntity())
+            prioridadRepository.delete(prioridad)
         }
     }
-
     fun selectedPrioridad(prioridadId:Int){
         viewModelScope.launch {
             if(prioridadId >0){
