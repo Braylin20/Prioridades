@@ -8,29 +8,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
+import dagger.hilt.android.AndroidEntryPoint
 import edu.ucne.prioridades.Data.dao.database.PrioridadDb
 import edu.ucne.prioridades.Data.dao.entities.PrioridadEntity
 import edu.ucne.prioridades.presentation.navigation.PrioridadNavHost
 import edu.ucne.prioridades.presentation.navigation.prioridad.PrioridadListScreen
 import edu.ucne.prioridades.ui.theme.PrioridadesTheme
 
-
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private lateinit var prioridadDb: PrioridadDb
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        prioridadDb = Room.databaseBuilder(
-            applicationContext,
-            PrioridadDb::class.java,
-            "Prioridad.db"
-        ).fallbackToDestructiveMigration()
-            .build()
-
         setContent {
             PrioridadesTheme {
                 val navHost = rememberNavController()
-                PrioridadNavHost(navHost,prioridadDb)
+                PrioridadNavHost(navHost)
             }
         }
     }
@@ -44,10 +38,7 @@ class MainActivity : ComponentActivity() {
             PrioridadEntity(3, "Baja", 1)
         )
         PrioridadesTheme {
-            PrioridadListScreen(
-                prioridadList,
-                createPrioridad = {},
-                ) { }
+
         }
     }
 }

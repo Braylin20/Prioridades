@@ -16,22 +16,13 @@ import edu.ucne.prioridades.presentation.navigation.prioridad.PrioridadScreen
 @Composable
 fun PrioridadNavHost(
     navHostController: NavHostController,
-    prioridadDb: PrioridadDb
 ) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val prioridadList by prioridadDb.prioridadDao().getAll()
-        .collectAsStateWithLifecycle(
-            initialValue = emptyList(),
-            lifecycleOwner = lifecycleOwner,
-            minActiveState = Lifecycle.State.STARTED
-        )
     NavHost(
         navController = navHostController,
         startDestination = Screen.PrioridadList
     ) {
         composable<Screen.PrioridadList> {
             PrioridadListScreen(
-                prioridadList = prioridadList,
                 createPrioridad = {navHostController.navigate(Screen.Prioridad(0))},
                 goToPrioridadScreen = {navHostController.navigate(Screen.Prioridad(it))}
             )
@@ -40,8 +31,8 @@ fun PrioridadNavHost(
             val prioridadId = it.toRoute<Screen.Prioridad>().prioridadId
             PrioridadScreen(
                 onGoToPrioridadListScreen = { navHostController.navigateUp() },
-                prioridadDb,
-                prioridadId
+                goBack =  { navHostController.navigateUp() },
+                prioridadId = prioridadId
             )
         }
     }

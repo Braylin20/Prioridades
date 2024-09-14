@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
@@ -26,15 +27,32 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import edu.ucne.prioridades.Data.dao.entities.PrioridadEntity
 import edu.ucne.prioridades.ui.theme.PrioridadesTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun PrioridadListScreen(
-    prioridadList: List<PrioridadEntity>,
+    viewModel: PrioridadViewModel = hiltViewModel(),
+    goToPrioridadScreen: (Int) -> Unit,
+    createPrioridad: () -> Unit
+){
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    PrioridadBodyListScreen(
+        uiState,
+        goToPrioridadScreen,
+        createPrioridad
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PrioridadBodyListScreen(
+    uiState: UiState,
+    goToPrioridadScreen: (Int) -> Unit,
     createPrioridad: () -> Unit,
-    goToPrioridadScreen: (Int) -> Unit
 ) {
     Scaffold(
         floatingActionButton = {
@@ -94,7 +112,7 @@ fun PrioridadListScreen(
                     .fillMaxSize()
                     .padding(horizontal = 15.dp),
             ) {
-                items(prioridadList) {
+                items(uiState.prioridades) {
                     PrioridadRow(it,goToPrioridadScreen)
                 }
             }
@@ -151,9 +169,6 @@ fun PrioridadListScreenPreview() {
         PrioridadEntity(3, "Baja", 1)
     )
     PrioridadesTheme {
-        PrioridadListScreen(
-            prioridadList,
-            createPrioridad = {},
-        ) { }
+
     }
 }
