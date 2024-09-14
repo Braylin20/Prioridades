@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.ucne.prioridades.Data.dao.entities.PrioridadEntity
 import edu.ucne.prioridades.Data.repository.PrioridadRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -34,6 +35,7 @@ class PrioridadViewModel @Inject constructor(
         }
     }
 
+
     private fun getPrioridades(){
         viewModelScope.launch {
             prioridadRepository.getPrioridades().collect { prioridades ->
@@ -42,6 +44,10 @@ class PrioridadViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun getAll(): Flow<List<PrioridadEntity>> {
+        return prioridadRepository.getPrioridades() // Simplemente retorna el Flow proporcionado por el repositorio
     }
     fun delete(prioridad: PrioridadEntity){
         viewModelScope.launch {
