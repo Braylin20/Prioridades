@@ -75,5 +75,23 @@ fun ModalDrawerSheet(
                 }
             },
         )
+        NavigationDrawerItem(
+            label = { Text(text = "Tickets") },
+            selected = false,
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = null
+                )
+            },
+            onClick = {
+                coroutineScope.launch {
+                    drawerState.close()
+                }
+                navHostController.navigate(Screen.TicketListScreen) {
+                    popUpTo(0)
+                }
+            },
+        )
     }
 }
