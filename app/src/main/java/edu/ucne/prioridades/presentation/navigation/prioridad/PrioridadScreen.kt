@@ -42,7 +42,6 @@ import kotlinx.coroutines.runBlocking
 @Composable
 fun PrioridadScreen(
     viewModel: PrioridadViewModel = hiltViewModel(),
-    goBack: () -> Unit,
     onGoToPrioridadListScreen: () -> Unit,
     prioridadId: Int
 ){
@@ -52,9 +51,7 @@ fun PrioridadScreen(
         onDescripcionChange = viewModel::onDescripcionChange,
         onDiasCompromisoChange = viewModel::onDiasCompromisoChange,
         savePrioridad = viewModel::save,
-        deletePrioridad = viewModel::delete,
         nuevaPrioridad = viewModel::nuevo,
-        goBack = goBack,
         onGoToPrioridadListScreen = onGoToPrioridadListScreen,
     )
 }
@@ -65,10 +62,8 @@ fun PrioridadBodyScreen(
     onDescripcionChange: (String)->Unit,
     onDiasCompromisoChange:(String) -> Unit,
     savePrioridad:()-> Unit,
-    deletePrioridad:()-> Unit,
     nuevaPrioridad:()-> Unit,
     onGoToPrioridadListScreen: () -> Unit,
-    goBack: () -> Unit
 ) {
     Scaffold(
         floatingActionButton = {
@@ -118,8 +113,6 @@ fun PrioridadBodyScreen(
                         modifier = Modifier.fillMaxWidth(),
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                     )
-
-
                     Text(
                         text = uiState.errorMessage?: "",
                         color = MaterialTheme.colorScheme.error,
@@ -146,7 +139,6 @@ fun PrioridadBodyScreen(
                         OutlinedButton(
                             onClick = {
                                 savePrioridad()
-                                goBack()
                             }
                         ) {
                             Icon(

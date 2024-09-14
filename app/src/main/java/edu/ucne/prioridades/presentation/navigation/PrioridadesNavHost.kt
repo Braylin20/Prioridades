@@ -31,7 +31,6 @@ fun PrioridadNavHost(
             val prioridadId = it.toRoute<Screen.Prioridad>().prioridadId
             PrioridadScreen(
                 onGoToPrioridadListScreen = { navHostController.navigateUp() },
-                goBack =  { navHostController.navigateUp() },
                 prioridadId = prioridadId
             )
         }
