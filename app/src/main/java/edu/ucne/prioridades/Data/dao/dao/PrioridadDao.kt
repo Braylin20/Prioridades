@@ -14,8 +14,6 @@ interface PrioridadDao {
     @Upsert()
     suspend fun save(prioridad: PrioridadEntity)
 
-    @Update()
-    suspend fun update(prioridad: PrioridadEntity)
     @Query(
         """
             Select *
@@ -34,6 +32,4 @@ interface PrioridadDao {
 
     @Query("SELECT * FROM Prioridades WHERE descripcion LIKE :descripcion")
     suspend fun findByDescripcion(descripcion: String): PrioridadEntity?
-
-
 }
