@@ -1,5 +1,8 @@
 package edu.ucne.prioridades.presentation.navigation
-
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Menu
@@ -14,7 +17,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -62,7 +68,19 @@ fun PrioridadNavHost(
                 modifier = Modifier.padding(innerpadding)
             ) {
                 composable<Screen.Home> {
-                    Text("HOME")
+                    Box(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Text("HOME",
+                            modifier = Modifier.padding(innerpadding)
+                                .align(alignment = Alignment.Center),
+                            fontSize = 70.sp
+
+                        )
+                    }
+
                 }
                 composable<Screen.PrioridadList> {
                     PrioridadListScreen(
@@ -80,12 +98,14 @@ fun PrioridadNavHost(
                 composable<Screen.TicketListScreen> {
                     TicketListScreen(
                         createTicket = { navHostController.navigate(Screen.TicketScreen(0))},
-                        goToTicketScreen = {}
+                        goToTicketScreen = {navHostController.navigate(Screen.TicketScreen(it))}
                     )
                 }
                 composable<Screen.TicketScreen> {
+                    val ticketId = it.toRoute<Screen.TicketScreen>().tickeId
                     TicketScreen(
-                       onNavigateBack = {navHostController.navigateUp()}
+                       onNavigateBack = {navHostController.navigateUp()},
+                        ticketId = ticketId
                     )
                 }
             }
