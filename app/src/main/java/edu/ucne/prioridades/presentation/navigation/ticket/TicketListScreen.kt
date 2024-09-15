@@ -25,36 +25,38 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
+import edu.ucne.prioridades.Data.dao.entities.PrioridadEntity
 import edu.ucne.prioridades.Data.dao.entities.TicketEntity
+import edu.ucne.prioridades.presentation.navigation.prioridad.PrioridadViewModel
 import edu.ucne.prioridades.presentation.navigation.prioridad.SwipeToDeleteContainer
 
 
 @Composable
 fun TicketListScreen(
     viewModel: TicketViewModel = hiltViewModel(),
+    viewModelPrioridad: PrioridadViewModel = hiltViewModel(),
     goToTicketScreen: (Int) -> Unit,
     createTicket: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val prioridades by viewModelPrioridad.getAll().collectAsStateWithLifecycle(emptyList())
+
     TicketBodyListScreen(
-        uiState,
-        goToTicketScreen,
-        createTicket,
-        onTicketSelected = viewModel::selectedTicket,
-        onDelete = viewModel::delete,
+        uiState = uiState,
+        prioridades = prioridades,
+        goToTicketScreen = goToTicketScreen,
+        createTicket = createTicket,
+        onDelete = viewModel::delete
     )
 }
-
 
 @Composable
 fun TicketBodyListScreen(
     uiState: UiState,
-    goToTicketScreen: (Int)-> Unit,
-    createTicket: ()-> Unit,
-    onTicketSelected: (Int) -> Unit,
-    onDelete: (TicketEntity) -> Unit
+    prioridades: List<PrioridadEntity>,
+    goToTicketScreen: (Int) -> Unit,
+    createTicket: () -> Unit,
+    onDelete: (TicketEntity) -> Unit,
 ) {
     Scaffold(
         floatingActionButton = {
@@ -65,11 +67,11 @@ fun TicketBodyListScreen(
                 Icon(Icons.Filled.Add, contentDescription = null)
             }
         }
-    ) { innerpadding->
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerpadding)
+                .padding(innerPadding)
         ) {
             Text(
                 text = "Lista de Tickets",
@@ -84,38 +86,30 @@ fun TicketBodyListScreen(
                     .padding(15.dp)
             ) {
                 Text(
-                    "Id",
+                    "Cliente",
                     modifier = Modifier
-                        .weight(1f)
+                        .weight(1.5f)
                         .align(Alignment.CenterVertically),
-                    fontSize = 13.sp,
+                    fontSize = 16.sp,
                     fontFamily = FontFamily.SansSerif,
                     textAlign = TextAlign.Center
                 )
                 Text(
                     "Prioridad",
                     modifier = Modifier
-                        .weight(2.5f)
+                        .weight(3f)
                         .align(Alignment.CenterVertically),
-                    fontSize = 13.sp,
+                    fontSize = 16.sp,
                     fontFamily = FontFamily.SansSerif,
                     textAlign = TextAlign.Center
                 )
-                Text(
-                    "Descripción",
-                    modifier = Modifier
-                        .weight(2.5f)
-                        .align(Alignment.CenterVertically),
-                    fontSize = 13.sp,
-                    fontFamily = FontFamily.SansSerif,
-                    textAlign = TextAlign.Center
-                )
+
                 Text(
                     "Asunto",
                     modifier = Modifier
                         .weight(2.5f)
                         .align(Alignment.CenterVertically),
-                    fontSize = 13.sp,
+                    fontSize = 16.sp,
                     fontFamily = FontFamily.SansSerif,
                     textAlign = TextAlign.Center
                 )
@@ -124,7 +118,7 @@ fun TicketBodyListScreen(
                     modifier = Modifier
                         .weight(2.5f)
                         .align(Alignment.CenterVertically),
-                    fontSize = 13.sp,
+                    fontSize = 16.sp,
                     fontFamily = FontFamily.SansSerif,
                     textAlign = TextAlign.Center
                 )
@@ -136,70 +130,61 @@ fun TicketBodyListScreen(
             ) {
                 items(
                     uiState.tickets,
-                    key = { it.prioridadId!! }
-                ) {
+                    key = { it.ticketId!! }
+                ) { ticket ->
+                    val prioridadDescripcion = prioridades.find { it.prioridadId == ticket.prioridadId }?.descripcion ?: "Sin prioridad"
                     SwipeToDeleteContainer(
-                        item = it,
+                        item = ticket,
                         onDelete = onDelete
-                    ) { ticket ->
-                        TicketRow(ticket,goToTicketScreen, onTicketSelected)
+                    ) {
+                        TicketRow(ticket, prioridadDescripcion, goToTicketScreen)
                     }
                 }
             }
         }
-
-
     }
 }
 
-
 @Composable
 fun TicketRow(
-    it: TicketEntity,
-    goToTicketScreen:(Int) -> Unit,
-    onTicketSelected :(Int) -> Unit
+    ticket: TicketEntity,
+    prioridadDescripcion: String,
+    goToTicketScreen: (Int) -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .clickable {
-                goToTicketScreen(it.prioridadId?:0)
+                goToTicketScreen(ticket.prioridadId ?: 0)
             }
             .background(MaterialTheme.colorScheme.background)
             .padding(vertical = 15.dp)
     ) {
         Text(
-            modifier = Modifier.weight(1f),
-            text = it.ticketId.toString(),
+            modifier = Modifier.weight(2f),
+            text = ticket.cliente?:"",
+            fontSize = 18.sp,
+            fontFamily = FontFamily.SansSerif,
+            textAlign = TextAlign.Center
+        )
+        Text(
+            modifier = Modifier.weight(3f),
+            text = prioridadDescripcion,
             fontSize = 18.sp,
             fontFamily = FontFamily.SansSerif,
             textAlign = TextAlign.Center
         )
         Text(
             modifier = Modifier.weight(2.5f),
-            text = it.prioridadId.toString(),
+            text = ticket.asunto.toString(),
             fontSize = 18.sp,
             fontFamily = FontFamily.SansSerif,
             textAlign = TextAlign.Center
         )
         Text(
             modifier = Modifier.weight(2.5f),
-            text = it.descripcion.toString(),
-            fontSize = 18.sp,
-            fontFamily = FontFamily.SansSerif,
-            textAlign = TextAlign.Center
-        )
-        Text(
-            modifier = Modifier.weight(2.5f),
-            text = it.asunto.toString(),
-            fontSize = 18.sp,
-            fontFamily = FontFamily.SansSerif,
-            textAlign = TextAlign.Center
-        )
-        Text(
-            modifier = Modifier.weight(2.5f),
-            text = it.date.toString(),
-            fontSize = 18.sp,
+            text = ticket.date.toString(),
+            fontSize = 16.sp,
             fontFamily = FontFamily.SansSerif,
             textAlign = TextAlign.Center
         )
