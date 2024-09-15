@@ -15,7 +15,7 @@ import edu.ucne.prioridades.Data.dao.entities.TicketEntity
         PrioridadEntity::class,
         TicketEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
