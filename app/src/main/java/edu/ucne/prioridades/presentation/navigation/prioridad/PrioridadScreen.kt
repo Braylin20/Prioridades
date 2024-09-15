@@ -45,7 +45,13 @@ fun PrioridadScreen(
     onGoToPrioridadListScreen: () -> Unit,
     prioridadId: Int
 ){
+    LaunchedEffect(key1 = prioridadId) {
+        if (prioridadId > 0) {
+            viewModel.selectedPrioridad(prioridadId)  // Cargar prioridad para editar
+        }
+    }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     PrioridadBodyScreen(
         uiState = uiState,
         onDescripcionChange = viewModel::onDescripcionChange,
@@ -53,6 +59,7 @@ fun PrioridadScreen(
         savePrioridad = viewModel::save,
         nuevaPrioridad = viewModel::nuevo,
         onGoToPrioridadListScreen = onGoToPrioridadListScreen,
+        prioridadId = prioridadId
     )
 }
 
@@ -64,6 +71,7 @@ fun PrioridadBodyScreen(
     savePrioridad:()-> Unit,
     nuevaPrioridad:()-> Unit,
     onGoToPrioridadListScreen: () -> Unit,
+    prioridadId: Int
 ) {
     Scaffold(
         floatingActionButton = {
@@ -100,6 +108,7 @@ fun PrioridadBodyScreen(
                         .fillMaxWidth()
                         .padding(8.dp)
                 ) {
+
                     OutlinedTextField(
                         label = { Text(text = "Descripción") },
                         value = uiState.descripcion,
