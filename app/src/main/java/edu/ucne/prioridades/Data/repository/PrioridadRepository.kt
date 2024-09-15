@@ -14,4 +14,6 @@ class PrioridadRepository @Inject constructor(
     suspend fun delete(prioridad: PrioridadEntity) = prioridadDao.delete(prioridad)
 
     fun getPrioridades() = prioridadDao.getAll()
+
+    suspend fun exist(descripcion: String) = prioridadDao.findByDescripcion(descripcion)
 }
