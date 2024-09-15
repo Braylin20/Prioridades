@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
@@ -19,6 +20,8 @@ import androidx.compose.ui.unit.dp
 import edu.ucne.prioridades.presentation.navigation.Screen
 import kotlinx.coroutines.launch
 import androidx.compose.material3.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.CoroutineScope
 
@@ -31,12 +34,17 @@ fun ModalDrawerSheet(
     ModalDrawerSheet {
         Box(
             modifier = Modifier
-                .background(Color.Green)
+                .background(MaterialTheme.colorScheme.background)
                 .fillMaxWidth()
                 .height(150.dp)
 
         ) {
-            Text("")
+            Text("Menú",
+                modifier = Modifier
+                    .padding(16.dp)
+                    .align(alignment = Alignment.Center),
+                fontSize = 50.sp
+            )
         }
         Spacer(modifier = Modifier.padding(20.dp))
         NavigationDrawerItem(
@@ -62,7 +70,7 @@ fun ModalDrawerSheet(
             selected = false,
             icon = {
                 Icon(
-                    imageVector = Icons.Default.Settings,
+                    imageVector = Icons.Default.Build,
                     contentDescription = null
                 )
             },
