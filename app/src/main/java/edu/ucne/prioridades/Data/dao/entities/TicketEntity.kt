@@ -9,7 +9,7 @@ class TicketEntity(
     @PrimaryKey
     val ticketId: Int? = null,
     val prioridadId: Int? = null,
-    val date: Date? = null,
+    val date: String? = null,
     val cliente: String? = null,
     val asunto: String? = null,
     val descripcion: String? = null,
