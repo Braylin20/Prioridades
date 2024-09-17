@@ -12,7 +12,9 @@ interface TicketDao {
     @Upsert
     suspend fun save(ticket: TicketEntity)
 
-    @Query("Select * From Tickets Where ticketId = :id")
+    @Query("""
+        Select * From Tickets Where ticketId = :id Limit 1
+        """)
     suspend fun find(id: Int): TicketEntity?
 
     @Delete
