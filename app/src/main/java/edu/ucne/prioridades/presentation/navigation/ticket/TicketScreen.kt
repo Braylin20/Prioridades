@@ -241,7 +241,7 @@ fun TicketBodyScreen(
                             Text(text = "Nuevo")
                         }
                         OutlinedButton(
-                            onClick = saveTicket
+                            onClick = { saveTicket() }
 
                         ) {
                             Icon(

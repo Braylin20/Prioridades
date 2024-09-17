@@ -155,7 +155,7 @@ fun TicketRow(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .clickable {
-                goToTicketScreen(ticket.prioridadId ?: 0)
+                goToTicketScreen(ticket.ticketId ?: 0)
             }
             .background(MaterialTheme.colorScheme.background)
             .padding(vertical = 15.dp)
@@ -163,6 +163,14 @@ fun TicketRow(
         Text(
             modifier = Modifier.weight(2f),
             text = ticket.cliente?:"",
+            fontSize = 18.sp,
+            fontFamily = FontFamily.SansSerif,
+            textAlign = TextAlign.Center
+        )
+
+        Text(
+            modifier = Modifier.weight(2f),
+            text = ticket.ticketId.toString(),
             fontSize = 18.sp,
             fontFamily = FontFamily.SansSerif,
             textAlign = TextAlign.Center
